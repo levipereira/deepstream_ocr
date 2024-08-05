@@ -1,0 +1,58 @@
+infer_config {
+  unique_id: 1
+  gpu_ids: [0]
+  max_batch_size: 32
+  backend {
+
+    triton {
+      model_name: "omni-nvidia-ocrnet"
+      version: -1
+      grpc {
+        url: "127.0.0.1:8001"
+        enable_cuda_buffer_sharing: true
+      }
+    }
+  }
+
+  input_tensor_from_meta { 
+      is_first_dim_batch : true 
+  }
+
+  #preprocess {
+  #  network_format: IMAGE_FORMAT_GRAY 
+  #  tensor_order: TENSOR_ORDER_NONE
+  #  normalize {
+  #    scale_factor: 0.00784313
+  #  }
+  #}
+
+  postprocess {
+     classification {
+      threshold:0.2
+      custom_parse_classifier_func: "NvDsInferParseOCRNetCTC"
+    }
+  }
+  extra {
+    copy_input_to_host_buffers: false
+    output_buffer_pool_size: 6
+  }
+  
+  custom_lib {
+    path: "nvocr/nvinfer_ocrnet_parser.so"
+  }
+}
+
+input_control {
+  process_mode : PROCESS_MODE_FULL_FRAME
+  interval : 0
+}
+
+output_control {
+  output_tensor_meta: false
+}
+
+
+
+
+
+
