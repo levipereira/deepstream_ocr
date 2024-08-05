@@ -5,7 +5,7 @@ infer_config {
   backend {
 
     triton {
-      model_name: "omni-nvidia-ocrnet"
+      model_name: "nvidia-ocrnet"
       version: -1
       grpc {
         url: "127.0.0.1:8001"
